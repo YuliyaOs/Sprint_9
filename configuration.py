@@ -1,0 +1,8 @@
+URL = 'https://foodgram-frontend-1.foodgram.education-services.ru/'
+URL_BACKEND = 'https://foodgram-backend-1.foodgram.education-services.ru/api/users/'
+CREATE_ACCOUNT = 'signup'
+SIGNIN = 'signin'
+MAIN_PAGE = 'recipes'
+CREATE_RECEIPT = 'recipes/create'
+LOGIN_USER = 'https://foodgram-backend-1.foodgram.education-services.ru/api/auth/token/login/'
+SELENOID_REMOTE_URL = 'http://selenoid:4444/wd/hub'

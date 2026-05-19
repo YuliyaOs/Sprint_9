@@ -1,0 +1,18 @@
+# Файл ci.yml
+name: Selenoid Tests Workflow
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+on:
+  push:
+    branches:
+      - develop
+jobs:
+  run-selenoid-tests:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out repository code  
+        uses: actions/checkout@v4
+      - name: Pull selenoid image
+        run: docker pull selenoid/vnc_chrome:128.0
+      - name: Run tests in docker
+        run: docker compose up --build --exit-code-from test

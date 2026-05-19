@@ -1,0 +1,53 @@
+# Файл docker-compose.yml
+
+# Перечень контейнеров
+services:
+  # Имя и описание первого контейнера; имя выбирает разработчик. 
+  # Это контейнер селеноида
+  selenoid:
+    # Из какого образа запустить контейнер:
+    image: "aerokube/selenoid"
+    # Как назвать контейнер:
+    container_name: selenoid
+    # Порты для работы:
+    ports:
+      - "4444:4444"
+    # Настройка сети для взаимодействия контейнеров
+    networks:
+      - selenoid
+    # Какой volume подключить для этого контейнера
+    volumes:
+      - "./browsers.json:/etc/selenoid/browsers.json" #тут должен лежать browsers.json с настройками браузера
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    environment:
+      - OVERRIDE_VIDEO_OUTPUT_DIR=/c/etc/selenoid/video
+    command: [ "-conf", "/etc/selenoid/browsers.json", "-container-network", "selenoid" ]
+
+  # Имя и описание контейнера ui для селеноида
+  selenoid-ui:
+    image: "aerokube/selenoid-ui:latest"
+    container_name: selenoid-ui
+    links:
+      - selenoid
+    ports:
+      - "8081:8080"
+    networks:
+      - selenoid
+    command: [ "--selenoid-uri", "http://selenoid:4444" ]
+
+  test:
+    build: .
+    container_name: pytest-one
+    volumes:
+      - ".:/app"
+    # Какие контейнеры нужно запустить до старта этого контейнера:
+    depends_on:
+      - selenoid
+    networks:
+      - selenoid
+    command: [ "pytest", "-v", "--alluredir=allure-results" ]
+
+# Регистрация новой сети:
+networks:
+  selenoid:
+    name: selenoid
